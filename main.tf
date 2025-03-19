@@ -4,6 +4,12 @@ resource "local_file" "pet" { // provider: local, resource: file, and resource n
     file_permission = "0700"
 }
 
+resource "random_pet" "my-pet" {
+    prefix = "Mrs"
+    separator = "."
+    length = "1"
+}
+
 // terraform init
 // terraform plan
 // terraform apply
