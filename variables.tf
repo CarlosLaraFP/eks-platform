@@ -35,16 +35,21 @@ variable struct {
     }
 }
 
+variable "account_id" {
+    description = "AWS account ID"
+    type = string
+}
+
 variable "cluster_name" {
   description = "Name of the EKS cluster"
   type        = string
   default     = "my-eks-cluster"
 }
 
-variable "spot_instance_type" {
-  description = "Instance type for the spot worker node"
-  type        = string
-  default     = "t3.nano"
+variable "spot_instance_types" {
+  description = "Instance types for the spot worker node"
+  type        = list(string)
+  default     = ["t3.nano", "t4g.nano", "t3a.nano", "t4g.micro", "t3a.micro", "t3.micro", "t4g.small", "t3a.small", "t3.small"]
 }
 
 variable "spot_price" {

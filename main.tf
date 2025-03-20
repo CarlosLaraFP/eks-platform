@@ -23,13 +23,25 @@ module "eks" {
   # Enable IRSA (IAM Roles for Service Accounts)
   enable_irsa = true
 
+  # Add access entries for the root user
+  access_entries = {
+    root-user = {
+      principal_arn = "arn:aws:iam::${var.account_id}:root"
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        }
+      }
+    }
+  }
+
   # EKS-managed node group for spot instances
   eks_managed_node_groups = {
     spot_node_group = {
       name = "spot-node-group"
 
       # EC2 instance configuration
-      instance_types = [var.spot_instance_type]
+      instance_types = var.spot_instance_types
       capacity_type  = "SPOT"
 
       desired_size = 1
