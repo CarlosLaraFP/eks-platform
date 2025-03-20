@@ -49,11 +49,11 @@ variable "cluster_name" {
 variable "spot_instance_types" {
   description = "Instance types for the spot worker node"
   type        = list(string)
-  default     = ["t3.nano", "t4g.nano", "t3a.nano", "t4g.micro", "t3a.micro", "t3.micro", "t4g.small", "t3a.small", "t3.small"]
+  default     = ["t3.medium", "t3a.medium", "t3.nano", "t3a.nano", "t3a.micro", "t3.micro", "t3a.small", "t3.small"]
 }
 
 variable "spot_price" {
   description = "Maximum price to pay for the spot instance"
   type        = string
-  default     = "0.01"  # Adjust based on your budget and region
+  default     = "0.05"  # Adjust based on your budget and region
 }
