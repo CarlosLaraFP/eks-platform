@@ -17,26 +17,39 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = "1.32"
 
-  vpc_id          = module.vpc.vpc_id
-  subnet_ids      = module.vpc.private_subnets
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
 
-  self_managed_node_groups = {
-    spot = {
-      desired_capacity = 1
-      max_capacity     = 1
-      min_capacity     = 1
+  # Enable IRSA (IAM Roles for Service Accounts)
+  enable_irsa = true
 
+  # EKS-managed node group for spot instances
+  eks_managed_node_groups = {
+    spot_node_group = {
+      name = "spot-node-group"
+
+      # EC2 instance configuration
       instance_types = [var.spot_instance_type]
       capacity_type  = "SPOT"
-      spot_price    = var.spot_price
 
-      k8s_labels = {
-        Environment = "test"
-        NodeGroup   = "spot"
+      desired_size = 1
+      min_size     = 1
+      max_size     = 1
+
+      # SSH key for accessing the nodes
+      key_name = "my-key-pair"  # Replace with your SSH key name
+
+      # IAM role for the nodes
+      iam_role_additional_policies = {
+        AmazonEC2ContainerRegistryReadOnly = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        AmazonEKSWorkerNodePolicy          = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+        AmazonEKS_CNI_Policy               = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
       }
 
-      additional_tags = {
-        Name = "spot-node"
+      # Tags for the nodes
+      tags = {
+        Environment = "test"
+        NodeGroup   = "spot"
       }
     }
   }
@@ -44,7 +57,7 @@ module "eks" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.19.0"
+  version = "5.19.0"  # Use the latest version of the VPC module
 
   name = "eks-vpc"
   cidr = "10.0.0.0/16"
