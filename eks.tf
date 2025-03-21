@@ -6,8 +6,22 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
+  cluster_endpoint_public_access  = true
+  cluster_endpoint_private_access = true
   # Enable IRSA (IAM Roles for Service Accounts)
   enable_irsa = true
+    
+  # Add an inbound rule to the control plane security group
+  cluster_security_group_additional_rules = {
+    ingress_from_local_machine = {
+      description = "Allow HTTPS access from local machine"
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
+      cidr_blocks = ["${var.local_machine_ip}/32"]  # Replace with your local machine's IP
+    }
+  }
 
   # Add access entries for the root user
   access_entries = {
@@ -33,12 +47,6 @@ resource "aws_key_pair" "eks_key" {
 
 data "aws_caller_identity" "current" {}
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-  # Ensure this data source is evaluated after the EKS cluster is created
-  depends_on = [module.eks]
-}
-
 resource "aws_eks_node_group" "eks_nodes" {
   # EKS-managed node group for spot instances
   cluster_name    = module.eks.cluster_name
@@ -53,7 +61,7 @@ resource "aws_eks_node_group" "eks_nodes" {
   }
 
   instance_types = var.spot_instance_types
-  capacity_type = "SPOT"
+  capacity_type = "ON_DEMAND"  # switch to Spot
 
   remote_access {
     ec2_ssh_key = aws_key_pair.eks_key.key_name
@@ -61,3 +69,9 @@ resource "aws_eks_node_group" "eks_nodes" {
 
   depends_on = [module.eks]
 }
+
+#data "aws_eks_cluster_auth" "cluster" {
+#  name = module.eks.cluster_id
+  # Ensure this data source is evaluated after the EKS cluster is created
+#  depends_on = [module.eks]
+#}

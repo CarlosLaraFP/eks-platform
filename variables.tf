@@ -49,11 +49,16 @@ variable "cluster_name" {
 variable "spot_instance_types" {
   description = "Instance types for the spot worker node"
   type        = list(string)
-  default     = ["t3.medium", "t3a.medium", "t3.nano", "t3a.nano", "t3a.micro", "t3.micro", "t3a.small", "t3.small"]
+  default     = ["t3.nano", "m5.large", "t2.large", "t3.large", "t3.medium", "t3a.medium", "t3a.nano", "t3a.micro", "t3.micro", "t3a.small", "t3.small"]
 }
 
 variable "spot_price" {
   description = "Maximum price to pay for the spot instance"
   type        = string
   default     = "0.05"  # Adjust based on your budget and region
+}
+
+variable "local_machine_ip" {
+  description = "The IP address of the local machine to allow access to the EKS API server"
+  type        = string
 }

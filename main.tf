@@ -15,3 +15,5 @@ resource "random_pet" "my-pet" {
 // terraform apply -auto-approve
 // terraform show
 // terraform destroy
+
+// aws eks update-kubeconfig --region us-west-2 --name my-eks-cluster
