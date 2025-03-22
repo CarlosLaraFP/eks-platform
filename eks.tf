@@ -42,6 +42,10 @@ module "eks" {
 
 data "aws_caller_identity" "current" {}
 
+data "aws_eks_cluster_auth" "cluster" {
+  name = module.eks.cluster_name
+}
+
 resource "aws_key_pair" "eks_key" {
   key_name   = "eks-key"  # Automatically creates a key pair
   public_key = file("~/.ssh/id_rsa.pub")  # Uses the local SSH public key
@@ -53,6 +57,7 @@ resource "aws_eks_node_group" "eks_nodes" {
   node_group_name = "eks-worker-nodes"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = module.vpc.private_subnets
+  ami_type = "AL2_x86_64"
 
   scaling_config {
     desired_size = 1
