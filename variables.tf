@@ -58,7 +58,7 @@ variable "spot_price" {
   default     = "0.05"  # Adjust based on your budget and region
 }
 
-variable "local_machine_ip" {
-  description = "The IP address of the local machine to allow access to the EKS API server"
-  type        = string
-}
+#variable "local_machine_ip" {
+#  description = "The IP address of the local machine to allow access to the EKS API server"
+#  type        = string
+#}

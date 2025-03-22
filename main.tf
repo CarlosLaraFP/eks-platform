@@ -17,3 +17,5 @@ resource "random_pet" "my-pet" {
 // terraform destroy
 
 // aws eks update-kubeconfig --region us-west-2 --name my-eks-cluster
+// ip addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+// export TF_VAR_account_id=

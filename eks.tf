@@ -11,7 +11,7 @@ module "eks" {
   # Enable IRSA (IAM Roles for Service Accounts)
   enable_irsa = true
     
-  # Add an inbound rule to the control plane security group
+  /*# Add an inbound rule to the control plane security group
   cluster_security_group_additional_rules = {
     ingress_from_local_machine = {
       description = "Allow HTTPS access from local machine"
@@ -19,9 +19,9 @@ module "eks" {
       from_port   = 443
       to_port     = 443
       type        = "ingress"
-      cidr_blocks = ["${var.local_machine_ip}/32"]  # Replace with your local machine's IP
+      cidr_blocks = ["${var.local_machine_ip}/20"]  # Replace with your local machine's IP
     }
-  }
+  }*/
 
   # Add access entries for the root user
   access_entries = {
@@ -40,12 +40,12 @@ module "eks" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_key_pair" "eks_key" {
   key_name   = "eks-key"  # Automatically creates a key pair
   public_key = file("~/.ssh/id_rsa.pub")  # Uses the local SSH public key
 }
-
-data "aws_caller_identity" "current" {}
 
 resource "aws_eks_node_group" "eks_nodes" {
   # EKS-managed node group for spot instances
@@ -55,7 +55,7 @@ resource "aws_eks_node_group" "eks_nodes" {
   subnet_ids      = module.vpc.private_subnets
 
   scaling_config {
-    desired_size = 2
+    desired_size = 1
     max_size     = 2
     min_size     = 1
   }
